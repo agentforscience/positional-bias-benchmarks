@@ -1,0 +1,10 @@
+Multiple-choice accuracy is the default way to compare large language models (LLMs), and a common worry is that models favor early answer positions (A/B), which would inflate benchmark scores.
+We test this claim with a within-question design: we show every question once per cyclic rotation of its options, so the correct answer occupies every position exactly once, and we vary the number of options on the \emph{same} questions.
+We evaluate seven open-weight instruct models (1.5B--14B parameters, three families) on \mmlu, \csqa, and \boolq.
+Answer position does change accuracy: six of seven models differ by 4--8 points between their best and worst position on \mmlu.
+But the direction is model-specific, not a shared preference for A/B; five of seven models score \emph{below} their own average when the key is at A.
+Because benchmark keys are close to uniform, published scores sit only 0.3 (\csqa) to 1.3 (\mmlu) points above position-balanced accuracy, and none of the 1.3 points comes from key placement.
+The cost is instability instead: 28--30\% of questions change correctness with option order, and the effect peaks where a model is near 50\% accuracy.
+True/false is not a safe format: word answers produce a 14.2-point gap between the two orders on average, and 51 points for the smallest model.
+Relabeling options 1--4 instead of A--D more than doubles the position spread (5.9 to 13.6 points).
+Our results cover small open-weight models only, and we recommend reporting position-balanced accuracy when score gaps are a few points.

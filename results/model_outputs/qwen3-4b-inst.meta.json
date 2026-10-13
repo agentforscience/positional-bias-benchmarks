@@ -1,0 +1,10 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "tag": "qwen3-4b-inst",
+  "n": 42594,
+  "seconds": 473.5,
+  "dtype": "bfloat16",
+  "torch": "2.14.1+cu130",
+  "gpu": "NVIDIA RTX A6000",
+  "revision": null
+}

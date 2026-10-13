@@ -1,0 +1,176 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Four options: position matters, but not toward A/B}
+\label{sec:fouropt}
+
+\input{tables/mmlu_main}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/fig1_accuracy_by_gold_position.png}
+    \caption{Accuracy by position of the correct answer, relative to each model's position-balanced accuracy, with 95\% intervals. Left: \mmlu with four options. Right: \csqa with five options. The curves cross: no position is good or bad for all models. On \csqa, the last slot (E) is the worst position for four models and the best for the two Qwen3 models.}
+    \label{fig:accpos}
+\end{figure}
+
+{\bf Does position change accuracy?}
+Yes, for six of seven models.
+\Tabref{tab:mmlu_main} shows that the spread on \mmlu is 4.3--8.3 points for these six, against 1.3--1.7 points expected from noise alone, and Cochran's Q rejects position-independence for each of them after Holm correction.
+The exception is qwen2.5-1.5b, whose spread of 1.4 is at the noise level.
+
+{\bf Is the effect a preference for A/B?}
+No.
+Accuracy with the key at A is \emph{below} balanced accuracy, with the interval excluding zero, for five models, and above it for one (qwen3-8b; but see \secref{sec:robust}).
+Averaged over A and B, no model gains and two lose (llama3.1-8b $-$1.5, qwen3-4b-inst $-$3.0).
+Among the six models with an effect, B or C is the best position for four, D for one, and A for one (\figref{fig:accpos}).
+
+Selection shares tell the same story (\figref{fig:share}).
+With a balanced key, llama3.1-8b picks A 21.7\% of the time and D 27.1\%; qwen3-4b-inst picks A 21.5\% and D 27.3\%; qwen3-8b picks A 29.1\%.
+Two models (qwen2.5-1.5b, qwen2.5-14b) are not distinguishable from uniform.
+
+{\bf Are these patterns noise?}
+No.
+In a post hoc split-half check, each model's pattern replicates across two random halves of the questions: the correlation of the four position accuracies is 0.85--0.98 for the six models with a significant effect.
+The patterns are stable traits of each model.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/fig2_selection_share.png}
+    \caption{How often each position is chosen, minus the unbiased share, when the answer key is balanced. Bars show 95\% intervals. Models over- and under-select different positions; several under-select A on \mmlu.}
+    \label{fig:share}
+\end{figure}
+
+\subsection{How much do scores inflate?}
+\label{sec:inflation}
+
+\input{tables/inflation}
+
+\Tabref{tab:inflation} and \figref{fig:inflation} report the three definitions of inflation from \secref{sec:metrics}.
+
+\para{As published.}
+\mmlu scores sit 1.3 points \ci{0.7}{2.0} above balanced accuracy on average.
+\csqa scores are not distinguishable from balanced (0.3 \ci{$-$0.3}{1.0}).
+Both are well short of the hypothesized 3--8 points.
+
+\para{Key at A or B.}
+If every key were at A or B, the average model would score slightly \emph{lower} on \mmlu ($-$0.7 \ci{$-$1.0}{$-$0.3}).
+On \csqa four models gain 2--3 points and three lose 2--3.
+
+\para{Key at the best position.}
+Placing every key at the position a model favors is worth 2.0--3.6 points on \mmlu for the six models with an effect, and 2.2--5.0 on \csqa.
+This is the only definition that reaches the low end of the hypothesized range.
+It is also biased upward, because we pick the best position after the fact; noise alone gives 0.6--0.9 points.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/fig5_inflation_definitions.png}
+    \caption{Three definitions of score inflation, per model, with 95\% intervals. The shaded band marks the hypothesized 3--8 points. As-published inflation (blue) stays below the band for every model, and early-key inflation (orange) is negative for several models.}
+    \label{fig:inflation}
+\end{figure}
+
+{\bf Where do the 1.3 points on \mmlu come from?}
+Not from key placement.
+In a post hoc decomposition, we weight each model's per-position accuracy by the actual key distribution of our \mmlu sample (A 24.5\%, B 23.8\%, C 25.1\%, D 26.6\%); this predicts a gain of 0.0 \ci{0.0}{0.1}.
+The whole 1.3 points therefore reflects that the published arrangement is easier than a rotation with the key in the same slot.
+Part of this comes from options that only make sense in their original place, such as ``All of the above'' or ``Both A and B''.
+On the 108 questions that a regular expression flags as order-dependent, the as-published advantage is 4.7 \ci{2.4}{7.5} points, against 1.1 \ci{0.5}{1.7} on the other 1{,}392.
+The remaining 1.1 points is consistent with models having seen these items in their original order during training, but we cannot separate that explanation from order-dependent options that the regular expression missed.
+
+\subsection{Option count and format}
+\label{sec:format}
+
+\input{tables/format}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/fig3_format_ladder.png}
+    \caption{Position spread (left) and flip rate (right) by format, one dot per model; black bars are means over models. The spread is flat across option counts on \mmlu and jumps at five options on \csqa. The flip rate rises steadily with option count on both datasets. The outlier in the word-answer true/false condition is qwen2.5-1.5b.}
+    \label{fig:format}
+\end{figure}
+
+\para{True/false is not the safest format.}
+With word answers, the mean spread is 14.2 points, the largest in the study (\tabref{tab:format}).
+The spread is under 2 points for one of seven models with word answers (qwen3-8b, 0.9) and for four of seven with A/B letters.
+It is far above 2 for the rest: with word answers llama3.1-8b is at 18.9, phi3-mini at 12.1, and qwen2.5-1.5b at 51.4.
+The last model picks whichever word the instruction mentions first 75.7\% of the time; it scores 90.7\% when the true answer is mentioned first and 39.3\% when it is second.
+The direction again varies: four models favor the first-mentioned word and three the second.
+With two options there is no averaging over positions, so a preference for one word translates directly into accuracy.
+
+\para{Five options.}
+The spread exceeds 10 points for three of seven models (qwen2.5-7b 14.6, phi3-mini 10.6, qwen2.5-14b 10.2) and averages 8.8.
+On identical questions, going from four to five options raises the spread by 4.2 \ci{3.3}{4.9} points.
+The increase is concentrated in one slot: four models are worse when the key is at E, three of them by 5--11 points (qwen2.5-7b drops 10.8 points below its balanced accuracy there), while both Qwen3 models are \emph{best} at E (\figref{fig:accpos}, right).
+
+\para{Option count on its own does not drive the spread.}
+On \mmlu the spread is flat from two to four options ($k{=}4$ minus $k{=}2$: 0.0 \ci{$-$0.9}{1.1}).
+What rises steadily with option count on both datasets is the flip rate (\figref{fig:format}, right).
+More options mean more questions whose answer changes with order, but those changes mostly cancel rather than favor a position.
+
+\subsection{Difficulty}
+\label{sec:difficulty}
+
+\input{tables/difficulty}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/fig4_difficulty.png}
+    \caption{Position effect by difficulty quintile, mean of models with 95\% intervals. Left: directed gap. Middle: flip rate. Right: position-attributable share. With difficulty from the other models, the gap on \mmlu peaks in the second-hardest quintile; with the model's own confidence (green) the peak is sharper.}
+    \label{fig:difficulty}
+\end{figure}
+
+{\bf Is the effect strongest at medium difficulty?}
+Only if ``medium'' means ``near 50\% accuracy''.
+\Tabref{tab:difficulty} and \figref{fig:difficulty} show that the position effect is near zero on easy questions and large on hard ones.
+When we cut questions into thirds, the middle third is \emph{not} the peak: the hard third exceeds the middle third on directed gap by 3.3 \ci{1.1}{5.7} points on \mmlu and 7.6 \ci{5.2}{9.9} on \csqa.
+
+In quintiles, \mmlu does show a peak, at the second-hardest quintile, where balanced accuracy is 50\%.
+The hardest quintile, where accuracy is 20\% and below the 25\% chance rate, has a smaller gap.
+On \csqa the two hardest quintiles (30\% and 72\% accuracy) are level.
+
+Each model's own confidence, taken from the separate numeric-label run, gives a sharper version of the same shape on \mmlu.
+The gap is 19.7 \ci{16.7}{22.7} points in the quintile where accuracy is 47\%, and 78.5\% of those questions change correctness with order.
+It is 4.4 points where accuracy is 8\%, and zero where accuracy is 97\% or more.
+The effect therefore tracks uncertainty: it is largest where the model is close to a coin flip between a right and a wrong answer.
+On these benchmarks that region is the hard-to-middle part, not the middle.
+
+{\bf What share of accuracy is positional?}
+In the hardest quintile, 15.6\% (\mmlu) and 19.2\% (\csqa) of best-position accuracy would disappear under a balanced key; in the hardest third the figures are 13.0\% and 13.4\%.
+Single models go higher (qwen2.5-14b on the hardest \csqa quintile: 28\%).
+These are best-case figures with the upward bias noted in \secref{sec:inflation}, and the ratios in the hardest strata have small denominators.
+Measured on the benchmarks as published, the share is 6.9\% \ci{3.5}{10.1} in the hardest \mmlu third and indistinguishable from zero on \csqa.
+
+\subsection{Label ablation: 1--4 instead of A--D}
+\label{sec:labels}
+
+\input{tables/labels}
+
+We rerun \mmlu $k{=}4$ with the same questions in the same order but with numeric labels.
+We exclude phi3-mini from this comparison: it emits a whitespace token before a digit, so the first-token read-out carries no information.
+Over the remaining six models, the mean spread rises by 7.7 points \ci{6.4}{8.5}, to 13.6 (\tabref{tab:labels}).
+With numerals, all six models are below balanced accuracy when the key is in the first slot; llama3.1-8b scores 48.0\% there against 70.8\% in the second slot.
+The size of the order effect thus depends heavily on which symbols label the options.
+This fits the token-preference account of \citet{zheng2024selectors} better than a pure position account, although our design does not separate the two further.
+
+\subsection{Does the read-out match what models write?}
+\label{sec:readout}
+
+We also answer 400 \mmlu prompts per model by greedy generation.
+When the generated text contains a letter, it agrees with the first-token read-out in 97.5--99.8\% of cases across models.
+The generated text contains a letter in 95.2--100\% of cases for six models and in 89.0\% for qwen3-8b, which sometimes starts an explanation instead (\tabref{tab:readout} in the appendix).
+
+\subsection{Robustness}
+\label{sec:robust}
+
+\para{qwen3-8b is unreliable in direction on \mmlu.}
+This model puts less than half of its first-token probability on any letter for at least one rotation of 391 of the 1{,}500 questions.
+On the 1{,}109 remaining questions its spread is similar (7.2 versus 8.0), but the sign at position A flips, from $+$3.5 to $-$3.3.
+Its apparent preference for A in \secref{sec:fouropt} is thus produced by questions where it was not going to answer with a letter.
+For the other six models, the spread, the as-published gain, and the position-A effect each change by under 1 point under the same filter.
+
+\para{Batch-composition noise.}
+Rerunning qwen2.5-1.5b on 3{,}000 prompts with different batching reproduces 99.1\% of predictions; label log-probabilities move by 0.11 on average.
+This comes from bfloat16 arithmetic with padded batches.
+It adds up to about a point to flip rates and is unrelated to position.
+
+\para{Multiple comparisons.}
+Cochran's Q is significant after Holm correction in 57 of 70 model-by-condition cells, including 6 of 7 on \mmlu $k{=}4$ and 7 of 7 on \csqa $k{=}5$.

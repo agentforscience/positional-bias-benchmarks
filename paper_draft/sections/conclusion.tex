@@ -1,0 +1,12 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We test whether instruct LLMs favor early answer positions and whether this inflates multiple-choice scores, using a within-question rotation design on seven open-weight models and three benchmarks.
+Answer order changes what these models answer, but not in the way the hypothesis states.
+There is no shared preference for early positions: each model has its own stable pattern, and most do worse than their own average at A on \mmlu.
+Because benchmark keys are close to uniform, the net effect on published scores is about one point or less.
+The effect is concentrated on questions where the model is close to 50/50, is larger with five options than four because of the last slot, is largest for word-answer true/false in small models, and depends strongly on the label symbols.
+
+The key takeaway is that, for these models, answer position makes multiple-choice scores unstable at the question level rather than inflated in aggregate.
+
+Future work should, in order of value: rerun the same items on hosted frontier models with a generated-text read-out; separate label from position with a crossed design in which labels are permuted independently of slots; use full random shuffles on self-contained questions only, to remove the order-dependent-option confound; test whether the residual advantage of the published \mmlu order appears on a benchmark released after the models' training cut-offs; and repeat the true/false experiment with plain factual statements and several phrasings.

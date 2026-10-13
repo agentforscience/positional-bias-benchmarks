@@ -1,0 +1,23 @@
+\section{Related Work}
+\label{sec:related}
+
+\para{Selection bias in multiple-choice answering.}
+\citet{zheng2024selectors} show that LLMs have a selection bias in multiple-choice questions, attribute much of it to a preference for particular label \emph{tokens} rather than positions, and propose cyclic permutation as a cheap way to estimate and remove it.
+\citet{pezeshkpour2024order} report large accuracy swings when options are reordered.
+Building on these studies, we use cyclic rotation as a measurement tool rather than a debiasing method, and we ask a narrower question: how many accuracy points does position add to a score under explicit definitions of inflation?
+Unlike comparisons across benchmarks with different numbers of options, we vary the option count on the same questions, so format is not confounded with content.
+
+\para{Reading out answers.}
+\citet{robinson2023mcqa} study prompting LLMs with all options and reading the probability of the answer symbol.
+\citet{wang2024myanswer} show that first-token probabilities can disagree with the text an instruction-tuned model generates.
+We use a first-token read-out because it is deterministic and gives a full distribution over labels, and we check it against greedy generation on a subsample (\secref{sec:readout}).
+The check also identifies the one model and the one label set for which the read-out is unreliable.
+
+\para{Benchmarks and uncertainty in evaluation.}
+We use \mmlu~\citep{hendrycks2021mmlu}, \csqa~\citep{talmor2019commonsenseqa}, and \boolq~\citep{clark2019boolq} because they cover 4-option, 5-option, and yes/no formats.
+\citet{miller2024errorbars} argues for reporting uncertainty on evaluation scores and for clustering by question when responses are not independent.
+We follow this practice: every interval we report is a bootstrap over questions that resamples all rotations of a question together.
+
+\para{Difficulty and uncertainty.}
+\citet{zheng2024selectors} relate selection bias to model uncertainty.
+We revisit this link with a stratification that does not reuse the responses being analyzed: we define the difficulty of a question for one model from the other six models.

@@ -1,0 +1,78 @@
+\section{Experimental details}
+\label{app:setup}
+
+\para{Models and hardware.}
+\Tabref{tab:models} lists the model repositories.
+We run all models locally with HuggingFace \texttt{transformers} in bfloat16, each on one RTX A6000 (48\,GB).
+We left Gemma models out because their tokenizer files were not available to us.
+GPU time for the scored runs was about 1.9 hours in total (4 to 29 minutes per model on a shared machine, so timings are not comparable across models).
+The analysis takes about 10 minutes on CPU and reproduces every table exactly from a fixed seed.
+
+\begin{table}[h]
+    \centering
+    \caption{Models. We use the unsloth mirror of Meta's Llama-3.1-8B-Instruct weights.}
+    \label{tab:models}
+    \small
+    \begin{tabular}{@{}lll@{}}
+        \toprule
+        \textbf{Tag} & \textbf{HuggingFace repository} & \textbf{Family} \\
+        \midrule
+        qwen2.5-1.5b  & \texttt{Qwen/Qwen2.5-1.5B-Instruct} & Qwen \\
+        qwen2.5-7b    & \texttt{Qwen/Qwen2.5-7B-Instruct} & Qwen \\
+        qwen2.5-14b   & \texttt{Qwen/Qwen2.5-14B-Instruct} & Qwen \\
+        qwen3-4b-inst & \texttt{Qwen/Qwen3-4B-Instruct-2507} & Qwen \\
+        qwen3-8b      & \texttt{Qwen/Qwen3-8B} (thinking disabled) & Qwen \\
+        llama3.1-8b   & \texttt{unsloth/Meta-Llama-3.1-8B-Instruct} & Llama \\
+        phi3-mini     & \texttt{microsoft/Phi-3-mini-4k-instruct} & Phi \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Prompt templates}
+\label{app:prompts}
+
+Lettered multiple-choice items (shown here with four options):
+
+\begin{lstlisting}
+{question}
+
+A. {option}
+B. {option}
+C. {option}
+D. {option}
+
+Answer with the letter of the correct option only.
+\end{lstlisting}
+
+\boolq with word answers. The reversed order mentions ``False or True'' instead. The A/B-letter condition replaces the last line with the two lettered options and the letter instruction.
+
+\begin{lstlisting}
+Passage: {passage}
+
+Statement: The answer to the question "{question}?" is yes.
+
+Is the statement True or False? Answer with one word only: True or False.
+\end{lstlisting}
+
+\section{Read-out validation}
+\label{app:readout}
+
+\begin{table}[h]
+    \centering
+    \caption{Greedy generation on 400 \mmlu prompts per model, compared with the first-token read-out. Agreement is computed on the prompts where the generated text contains a letter.}
+    \label{tab:readout}
+    \small
+    \begin{tabular}{@{}lcc@{}}
+        \toprule
+        \textbf{Model} & \textbf{Generated text contains a letter \%} & \textbf{Agreement with read-out \%} \\
+        \midrule
+        llama3.1-8b   & 99.8  & 98.2 \\
+        phi3-mini     & 95.2  & 97.6 \\
+        qwen2.5-1.5b  & 97.5  & 99.5 \\
+        qwen2.5-7b    & 100.0 & 98.2 \\
+        qwen2.5-14b   & 99.2  & 99.8 \\
+        qwen3-4b-inst & 95.5  & 99.7 \\
+        qwen3-8b      & 89.0  & 97.5 \\
+        \bottomrule
+    \end{tabular}
+\end{table}

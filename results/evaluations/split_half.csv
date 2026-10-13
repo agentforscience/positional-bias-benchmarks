@@ -1,0 +1,15 @@
+model,cond,r_acc_by_pos,best_a,best_b,worst_a,worst_b
+qwen2.5-1.5b,csqa_k5,0.678074939852755,A,A,D,D
+qwen2.5-1.5b,mmlu_k4,-0.6852825268840702,A,C,C,A
+qwen2.5-7b,csqa_k5,0.9500652535932446,C,A,E,E
+qwen2.5-7b,mmlu_k4,0.9752284189478982,C,C,D,D
+qwen2.5-14b,csqa_k5,0.9758020087715931,A,A,E,E
+qwen2.5-14b,mmlu_k4,0.846267553264959,C,C,D,A
+qwen3-4b-inst,csqa_k5,0.9785445455775128,E,E,B,B
+qwen3-4b-inst,mmlu_k4,0.916617054217555,C,C,A,A
+qwen3-8b,csqa_k5,0.7980541270536359,E,D,B,B
+qwen3-8b,mmlu_k4,0.9799782273032046,A,A,B,B
+llama3.1-8b,csqa_k5,0.79315726249611,D,C,A,A
+llama3.1-8b,mmlu_k4,0.9514379088607968,D,D,A,A
+phi3-mini,csqa_k5,0.9252626858196541,B,B,E,E
+phi3-mini,mmlu_k4,0.931301969348526,C,B,D,A

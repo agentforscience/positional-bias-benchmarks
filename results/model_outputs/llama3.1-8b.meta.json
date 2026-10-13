@@ -1,0 +1,10 @@
+{
+  "model": "unsloth/Meta-Llama-3.1-8B-Instruct",
+  "tag": "llama3.1-8b",
+  "n": 42594,
+  "seconds": 1721.9,
+  "dtype": "bfloat16",
+  "torch": "2.14.1+cu130",
+  "gpu": "NVIDIA RTX A6000",
+  "revision": null
+}

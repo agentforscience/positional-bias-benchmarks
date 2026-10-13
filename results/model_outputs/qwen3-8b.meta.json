@@ -1,0 +1,10 @@
+{
+  "model": "Qwen/Qwen3-8B",
+  "tag": "qwen3-8b",
+  "n": 42594,
+  "seconds": 1396.0,
+  "dtype": "bfloat16",
+  "torch": "2.14.1+cu130",
+  "gpu": "NVIDIA RTX A6000",
+  "revision": null
+}

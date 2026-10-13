@@ -1,0 +1,10 @@
+{
+  "model": "microsoft/Phi-3-mini-4k-instruct",
+  "tag": "phi3-mini",
+  "n": 400,
+  "seconds": 8.5,
+  "dtype": "bfloat16",
+  "torch": "2.14.1+cu130",
+  "gpu": "NVIDIA RTX A6000",
+  "revision": null
+}

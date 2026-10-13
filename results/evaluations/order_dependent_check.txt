@@ -1,0 +1,18 @@
+order-dependent questions: 108 of 1500
+        model                  subset  n_q  bal_acc  spread  published_gain  published_order_part
+ qwen2.5-1.5b order-dependent options  108    61.57   15.74            3.24                  2.03
+ qwen2.5-1.5b  self-contained options 1392    55.66    2.59            1.89                  1.90
+   qwen2.5-7b order-dependent options  108    70.14    6.48            3.01                  2.57
+   qwen2.5-7b  self-contained options 1392    69.07    7.26            1.40                  1.43
+  qwen2.5-14b order-dependent options  108    73.38    8.33            3.47                  2.54
+  qwen2.5-14b  self-contained options 1392    76.17    4.17            0.99                  1.00
+qwen3-4b-inst order-dependent options  108    65.74   12.04            6.48                  5.24
+qwen3-4b-inst  self-contained options 1392    68.62    8.62            0.41                  0.37
+     qwen3-8b order-dependent options  108    65.51   20.37            5.79                  4.00
+     qwen3-8b  self-contained options 1392    68.12    7.61            0.84                  0.81
+  llama3.1-8b order-dependent options  108    64.81   14.81            1.85                  0.26
+  llama3.1-8b  self-contained options 1392    66.06    6.61            0.61                  0.60
+    phi3-mini order-dependent options  108    61.34   15.74            9.03                  8.12
+    phi3-mini  self-contained options 1392    68.50    6.32            1.33                  1.37
+order-dependent options: n=108  published_gain 4.70 [2.35, 7.54]  spread 13.36 [10.71, 18.39]  bal_acc 66.1
+self-contained options: n=1392  published_gain 1.07 [0.48, 1.68]  spread 6.17 [5.53, 7.17]  bal_acc 67.5

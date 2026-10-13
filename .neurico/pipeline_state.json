@@ -1,0 +1,30 @@
+{
+  "created_at": "2026-10-13T16:27:57.469647Z",
+  "stages": {
+    "resource_finder": {
+      "status": "completed",
+      "completed_at": "2026-10-13T16:31:06.981524Z",
+      "success": true,
+      "outputs": {
+        "skipped": true
+      }
+    },
+    "experiment_runner": {
+      "status": "completed",
+      "started_at": "2026-10-13T16:31:07.006200Z",
+      "completed_at": "2026-10-13T17:56:02.897325Z",
+      "success": true,
+      "outputs": {
+        "success": true,
+        "return_code": 0,
+        "elapsed_time": 5095.867777824402,
+        "log_file": "/data/summereunann/neurico-workspaces/positional_bias_in_multiple_ch_20261013_111352_6fe2f8d0/logs/execution_claude.log",
+        "transcript_file": "/data/summereunann/neurico-workspaces/positional_bias_in_multiple_ch_20261013_111352_6fe2f8d0/logs/execution_claude_transcript.jsonl",
+        "background_processes_terminated": false
+      }
+    }
+  },
+  "current_stage": null,
+  "completed": true,
+  "completed_at": "2026-10-13T17:56:03.094122Z"
+}

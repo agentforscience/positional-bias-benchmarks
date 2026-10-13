@@ -1,0 +1,10 @@
+{
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "tag": "qwen2.5-1.5b",
+  "n": 400,
+  "seconds": 4.8,
+  "dtype": "bfloat16",
+  "torch": "2.14.1+cu130",
+  "gpu": "NVIDIA RTX A6000",
+  "revision": null
+}

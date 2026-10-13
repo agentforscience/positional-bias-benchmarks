@@ -1,0 +1,18 @@
+\begin{table}[t]
+    \centering
+    \caption{Verdicts on the five hypotheses fixed before the experiments.}
+    \label{tab:verdicts}
+    \small
+    \begin{tabular}{@{}lp{0.23\textwidth}p{0.17\textwidth}p{0.47\textwidth}@{}}
+        \toprule
+        & \textbf{Claim} & \textbf{Verdict} & \textbf{Evidence} \\
+        \midrule
+        H1 & Consistent bias toward A/B & {\bf Not supported} & Position effects are real in 6/7 models but point in different directions; on \mmlu 5/7 are below their average at A. \\
+        H2 & 3--8 points inflation on 4-option items & {\bf Not supported} & As published $+$1.3 \ci{0.7}{2.0}, none of it from key placement; A/B key $-$0.7; best case 2.0--3.6. \\
+        H3 & Strongest at medium difficulty & {\bf Partly supported} & Strongest where the model is near 50\% accuracy; this is the hard-to-middle range, and the middle third is weaker than the hard third. \\
+        H4a & True/false $<$2 points & {\bf Not supported} & Mean spread 14.2 (words) and 4.4 (letters); under 2 for 1/7 and 4/7 models. \\
+        H4b & 5-option $>$10 points, the largest & {\bf Partly supported} & Spread $>$10 for 3/7 models, mean 8.8; larger than 4-option on the same questions, but smaller than true/false words and numeric labels. \\
+        H5 & Up to 15\% of accuracy near the boundary & {\bf Best case only} & 13--19\% in the hardest strata if every key sat at the model's favored position; 7\% or less as published. \\
+        \bottomrule
+    \end{tabular}
+\end{table}

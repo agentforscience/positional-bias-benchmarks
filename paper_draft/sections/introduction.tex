@@ -1,0 +1,40 @@
+\section{Introduction}
+\label{sec:intro}
+
+If a model's answer to a multiple-choice question depends on where the correct option is printed, then its benchmark score partly measures how the benchmark's answer key lines up with the model's habits.
+Multiple-choice accuracy is the default currency for comparing large language models (LLMs), and leaderboards routinely separate models by a few points.
+Benchmark builders and anyone comparing models with small accuracy gaps therefore need to know how large the positional component of a score is.
+
+A common form of this worry is directional: models prefer early positions (A/B), so scores are inflated.
+We started from a concrete version of this hypothesis, fixed before running any model: models over-select A/B; this inflates accuracy by 3--8 points on 4-option benchmarks; the effect is smallest for true/false ($<$2 points) and largest for 5-option items ($>$10 points); it is strongest on medium-difficulty questions; and near a model's decision boundary up to 15\% of apparent accuracy is positional.
+
+Prior work establishes that LLMs are sensitive to option order and that this sensitivity is tied to label tokens as well as positions~\citep{zheng2024selectors,pezeshkpour2024order,robinson2023mcqa}.
+Three things are harder to read off from it.
+First, comparing formats across different benchmarks confounds the number of options with question content.
+Second, stratifying by difficulty is circular if it reuses the same responses that measure the bias.
+Third, ``inflates scores'' is ambiguous: a score can be compared with a balanced key, with a key placed where the model likes to answer, or with the benchmark as published, and these give different numbers.
+
+{\bf How do we separate these?}
+We use a within-question design (\secref{sec:method}).
+We show each question once per cyclic rotation of its options, so the correct answer occupies every position exactly once.
+We build 2-, 3-, 4-, and 5-option versions from the \emph{same} questions of \mmlu~\citep{hendrycks2021mmlu} and \csqa~\citep{talmor2019commonsenseqa}, add native true/false items from \boolq~\citep{clark2019boolq}, and swap A--D labels for 1--4.
+We measure difficulty for each model from the \emph{other} models' responses, and we report three explicit definitions of inflation.
+We run seven open-weight instruct models from three families (1.5B--14B parameters) and score 298{,}158 prompts.
+
+{\bf What do we find?}
+Mostly, the hypothesis does not hold.
+Position matters: six of seven models differ by 4--8 points between their best and worst key position on \mmlu.
+But the direction differs from model to model, and five of seven models score below their own average when the key is at A.
+Scores on the benchmarks as published are 1.3 points (\mmlu) and 0.3 points (\csqa) above position-balanced accuracy, and on \mmlu none of the 1.3 points comes from where the keys are placed.
+What position preferences do produce is instability: about 30\% of \mmlu questions and 28\% of \csqa questions are answered correctly under some option orders and incorrectly under others.
+
+In summary, our contributions are:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item We design a within-question protocol that balances key position by rotation and varies option count and label set on identical questions, and we apply it to seven open-weight models on three benchmarks.
+    \item We show that position effects are real and stable within a model but not directed toward A/B, and that as-published scores exceed position-balanced accuracy by about one point or less.
+    \item We show that the effect tracks uncertainty: it is near zero on easy questions and peaks where a model is near 50\% accuracy, with a best-versus-worst-position gap of up to 19.7 points.
+    \item We find that format matters in unexpected ways: word-answer true/false gives the largest order effect (14.2 points on average), and numeric labels more than double the spread relative to letters (5.9 to 13.6 points).
+\end{itemize}
+
+Our results come from open-weight models of at most 14B parameters, five of them from one family; we could not run hosted frontier models, and we discuss this and other limits in \secref{sec:discussion}.
+We review related work in \secref{sec:related}, describe the protocol in \secref{sec:method}, present results in \secref{sec:results}, and conclude in \secref{sec:conclusion}.

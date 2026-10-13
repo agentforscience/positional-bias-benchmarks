@@ -1,0 +1,99 @@
+\section{Methodology}
+\label{sec:method}
+
+Our main question is whether instruct LLMs prefer early answer positions, by how much this changes measured accuracy, and how the effect depends on option count and question difficulty.
+We fixed the hypotheses and the analysis plan before running any model.
+
+\para{Hypotheses.}
+We test five claims:
+(H1) models over-select early positions (A/B);
+(H2) on 4-option items this inflates accuracy by 3--8 points;
+(H3) the effect is largest on medium-difficulty questions;
+(H4) true/false shows $<$2 points and 5-option shows $>$10 points;
+(H5) near the decision boundary, up to 15\% of apparent accuracy is positional.
+
+\subsection{Within-question rotation design}
+\label{sec:design}
+
+For a question with $k$ options, we show all $k$ \emph{cyclic rotations} of its option list.
+The correct answer (the \emph{key}) therefore occupies every position exactly once per question, and an unbiased model chooses each position $1/k$ of the time.
+Rotation 0 of the native-$k$ item is the order in which the benchmark was published.
+We choose rotations over full shuffles because they balance key position with only $k$ prompts per question; the cost is that they cover $k$ of the $k!$ possible orders.
+
+To vary the number of options without changing content, we build reduced-$k$ versions of each question that keep the key plus a seeded, nested sample of the same question's distractors.
+\Tabref{tab:conditions} lists all conditions.
+In total each model answers 42{,}594 prompts, for 298{,}158 scored prompts overall.
+
+\begin{table}[t]
+    \centering
+    \caption{Conditions. Each question appears once per cyclic rotation of its options, so the key is balanced across positions in every condition.}
+    \label{tab:conditions}
+    \small
+    \begin{tabular}{@{}llr@{}}
+        \toprule
+        \textbf{Condition} & \textbf{Options shown} & \textbf{Prompts per model} \\
+        \midrule
+        \mmlu $k{=}4$, $k{=}3$, $k{=}2$ & A--D, A--C, A--B & 6{,}000 / 4{,}500 / 3{,}000 \\
+        \mmlu $k{=}4$, numeric labels & 1--4 (label ablation) & 6{,}000 \\
+        \csqashort $k{=}5$, $4$, $3$, $2$ & A--E down to A--B & 6{,}105 / 4{,}884 / 3{,}663 / 2{,}442 \\
+        \boolq, A/B letters & ``A. True / B. False'' and the reverse & 3{,}000 \\
+        \boolq, True/False words & ``True or False'' vs.\ ``False or True'' & 3{,}000 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Data, models, and prompts}
+
+\para{Data.}
+We use a sample of 1{,}500 \mmlu test questions stratified over the 57 subjects (seed 42), all 1{,}221 \csqa validation questions, and 1{,}500 \boolq validation questions with passages under 1{,}500 characters (seed 42).
+
+\para{Models.}
+We run seven open-weight instruct models locally: Qwen2.5 at 1.5B, 7B, and 14B, Qwen3-4B-Instruct-2507, Qwen3-8B with thinking disabled, Llama-3.1-8B-Instruct, and Phi-3-mini-4k-instruct.
+We refer to them by the tags used in the tables (\eg qwen2.5-7b).
+All models run in bfloat16 with HuggingFace \texttt{transformers}; \secref{app:setup} gives repository names and hardware.
+We planned to include hosted frontier models but could not, because no API access was available; our conclusions therefore cover open-weight models of 14B parameters or fewer.
+
+\para{Prompts.}
+Prompts are zero-shot, with no system message, in each model's own chat template.
+A lettered item lists the question, the labeled options, and the instruction ``Answer with the letter of the correct option only.''
+\boolq items show a passage and the statement ``The answer to the question `\ldots?' is yes.''
+In the word condition the model answers ``True'' or ``False'', and we swap the order in which the instruction mentions the two words; in the letter condition the two answers are lettered options A and B, shown in both orders.
+\Secref{app:prompts} gives the templates verbatim.
+
+\para{Read-out.}
+We take the log-probability of each label at the first assistant token, summed over every vocabulary token that decodes to that label with or without leading whitespace.
+The prediction is the highest-scoring label.
+There is no sampling, so uncertainty comes from the choice of questions and not from generation.
+
+\subsection{Metrics}
+\label{sec:metrics}
+
+Let $\acc_p$ be accuracy when the key is at position $p$, and let $\bal = \frac{1}{k}\sum_p \acc_p$ be \emph{position-balanced accuracy}.
+
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item \textbf{Spread}: $\max_p \acc_p - \min_p \acc_p$.
+    \item \textbf{Selection share}: how often the model chooses each position; $1/k$ for an unbiased model.
+    \item \textbf{Inflation}, defined three ways because ``inflates scores'' is ambiguous:
+    \emph{as-published} (accuracy in the original option order minus $\bal$), which is the score people report;
+    \emph{early-key} (mean of $\acc_A$ and $\acc_B$ minus $\bal$), which tests the early-position mechanism;
+    and \emph{best-position} ($\max_p \acc_p - \bal$), an upper bound for a key aligned with the model's preference.
+    \item \textbf{Flip rate}: share of questions answered correctly in some rotations and incorrectly in others.
+    \item \textbf{Position-attributable share}: best-position inflation divided by best-position accuracy.
+\end{itemize}
+
+\para{Difficulty.}
+The difficulty of a question for a model is the mean position-balanced correctness of the \emph{other six} models on that question.
+It is therefore not computed from the responses being analyzed.
+As a secondary measure we use each model's own confidence, taken from the separate numeric-label run.
+Within difficulty strata we report a \emph{directed gap}: accuracy at the model's overall best position minus accuracy at its overall worst position.
+We added this metric after planning, to avoid picking the best position separately inside each small stratum.
+
+\subsection{Statistical analysis}
+
+We report 95\% percentile bootstrap intervals over questions (2{,}000 resamples for per-model numbers and 1{,}000 for means across models), resampling all rotations of a question together.
+Cochran's Q tests whether correctness depends on key position, and a chi-square test compares selection shares with uniform; we apply a Holm correction across all 70 model-by-condition cells.
+A permutation null, which shuffles position labels within each question (300 draws), gives the spread expected from noise alone.
+
+\para{Analyses added after seeing results.}
+The permutation null, the decomposition of the as-published gain (\secref{sec:inflation}), the split of \mmlu into order-dependent and self-contained questions, the split-half replication, and the low-label-mass filter (\secref{sec:robust}) were not planned in advance.
+We label them as post hoc where they appear.
